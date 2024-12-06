@@ -4,4 +4,5 @@
 
 /home/shahov/test_rar.rar
 /home/shahov/
-tJ&w
+abcd
+
