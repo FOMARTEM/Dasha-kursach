@@ -2,7 +2,6 @@
 #include <string>
 #include <cstdlib>
 #include <chrono>
-#include <random>
 
 using namespace std;
 using namespace chrono;
@@ -53,7 +52,7 @@ int extractArchive(const string& archivePath, const string& outputPath, const st
 returns FindPassword(const string& archivePath, const string& outputPath) {
     //string chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-    string chars = "01234abcd";
+    string chars = "abcd";
     returns founded = {"", 0, 1};
 
     //перебор      
