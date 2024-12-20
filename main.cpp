@@ -47,12 +47,17 @@ int extractArchive(const string& archivePath, const string& outputPath, const st
     //cout << result << endl;
     //2816 - неверный пароль, 2560 не верный путь, 0 всё хорошо
     if (result == 2560) {
-        cout << "Неверное указан путь к файлу или место разархивирования" << endl;
+        cout << "Неверное указан путь к файлу или место разархивирования"<< "\033[?25h\033[?12h" << endl;
+        //возвращаем настройки терминала в исходное состояние
         exit(1);
     } 
     return result;
 }
 
+/*
+    1) прогресс бар в позиции в 4 строке по попыткам
+    2) прогресс бар в 5 строке по %
+*/
 void printProgressBar (int attemp, const int combinations) {
     int temp = combinations / tryes;
     int ntf = nowTry * temp;
@@ -60,7 +65,7 @@ void printProgressBar (int attemp, const int combinations) {
     int pos = 50; //один символ 2%
     int filled = percent * pos / 100; 
     //printf("attemp: %d, combinations: %d temp: %d, ntf: %d, percent: %d, filled: %d\n", attemp, combinations, temp, ntf, percent, filled);
-    cout << "\rПрогресс: ["; // Выводим начало прогресс-бара \r
+    cout << "\033[4;1HПрогресс: ["; // Выводим начало прогресс-бара \r
     //вывод заполнености текущей стадии
     for (int i = 0; i < pos; i++) {
         if (i < filled) {
@@ -70,12 +75,32 @@ void printProgressBar (int attemp, const int combinations) {
         }
     }
     //конец вывода
-    cout << "] ";// << nowTry + 1 << " of " << tryes; // Выводим начало прогресс-бара
+    cout << "] " << ntf << " of " << combinations; // Выводим начало прогресс-бара
     cout.flush(); // Сбрасываем буфер, чтобы увидеть изменения немедленно
     nowTry = attemp/temp;
 }
 
+void printProgressBarPercent (int attemp, const int combinations) {
+    int percent = attemp * 100 / combinations;
+    int pos = 50; //один символ 2%
+    int filled = percent * pos / 100; 
+    //printf("attemp: %d, combinations: %d temp: %d, ntf: %d, percent: %d, filled: %d\n", attemp, combinations, temp, ntf, percent, filled);
+    cout << "\033[5;1HПрогресс: ["; // Выводим начало прогресс-бара \r
+    //вывод заполнености текущей стадии
+    for (int i = 0; i < pos; i++) {
+        if (i < filled) {
+            cout << '%';
+        } else {
+            cout << '.'; 
+        }
+    }
+    //конец вывода
+    cout << "] " << percent << " of 100%"; // Выводим начало прогресс-бара
+    cout.flush(); // Сбрасываем буфер, чтобы увидеть изменения немедленно
+}
+
 returns FindPassword(const string& archivePath, const string& outputPath) {
+    cout << "\033[?25l";
     //const char chars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //63 - 15752961
     const string chars = "abcdefghijklmnopqrstuvwxyz0123456789"; //37 - 1874161
     //const string chars = "abcd"; //4 - 256
@@ -98,11 +123,11 @@ returns FindPassword(const string& archivePath, const string& outputPath) {
 
                     //cout << founded.attempts << "%: Пароль - " << tpassword << endl; //вывод пароля
                     printProgressBar(founded.attempts, combinations);
-                    
+                    printProgressBarPercent(founded.attempts, combinations);
                     founded.found = extractArchive(archivePath, outputPath, tpassword);
                     if (founded.found == 0) {
                         founded.password = tpassword;
-                        cout << "\r\033[KПрогресс: 100% пароль найден" << endl;
+                        cout << "\r\033[2KПрогресс: 100% пароль найден" << endl; //2k очищает всю строку
                         //cout << endl << "Прогресс: 100% пароль найден" << endl; //если не нужно чистить прогрессбар
                         
                         return founded;
@@ -115,8 +140,9 @@ returns FindPassword(const string& archivePath, const string& outputPath) {
     return founded;
 }
 
+
 int main() {
-    
+    cout << "\033[2J\033[1;1H";
     // получаем путь к архиву
     string archivePath = getArchivePath();
 
@@ -127,7 +153,7 @@ int main() {
     //returns datas;
     returns datas = {"", 0, 1};
 
-    cout << "Начало поиска пароля:" << endl;
+    cout << "\033[?12lНачало поиска пароля:" << endl;
 
     auto start = high_resolution_clock::now();
 
@@ -140,9 +166,11 @@ int main() {
         cout << "Найденный пароль: " << datas.password << endl;
         cout << "Количество попыток: " << datas.attempts << endl;
         cout << "Затрачено: " << duration.count() << " ms" << endl;
+        cout << "\033[?25h\033[?12h";
     } else {
         cout << "Ошибка: Пароль не найден (проверьте ввод)." << endl;
         cout << "Затрачено: " << duration.count() << " ms" << endl;
+        cout << "\033[?25h\033[?12h";
         return 1;
     }
     
