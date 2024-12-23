@@ -101,7 +101,7 @@ void printProgressBarPercent (int attemp, const int combinations) {
 
 returns FindPassword(const string& archivePath, const string& outputPath) {
     cout << "\033[?25l";
-    //const char chars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //63 - 15752961
+    //const char chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //63 - 15752961
     const string chars = "abcdefghijklmnopqrstuvwxyz0123456789"; //37 - 1874161
     //const string chars = "abcd"; //4 - 256
     returns founded = {"", 0, 1};
