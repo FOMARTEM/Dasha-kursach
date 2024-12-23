@@ -12,3 +12,9 @@
 
 abcd
 
+/home/shahov/zxy3.rar
+
+/home/shahov/
+
+zxy3
+
